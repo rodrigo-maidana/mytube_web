@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://modulo-compras.rodrigomaidana.com:8080/',
+  baseURL: 'http://mytube.rodrigomaidana.com:8080/',
 });
 
 axiosInstance.interceptors.request.use((config) => {
