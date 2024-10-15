@@ -1,6 +1,6 @@
 // src/components/HomePage.jsx
 import React, { useEffect, useState } from 'react';
-import axiosInstance from './axiosInstance';
+import axiosInstance from './axiosinstance'
 import VideoCard from './VideoCard';
 import './HomePage.css';
 
@@ -8,7 +8,7 @@ const HomePage = () => {
     const [videos, setVideos] = useState([]);
 
     useEffect(() => {
-        axiosInstance.get('/videos')
+        axiosInstance.get('videos')
             .then(response => {
                 setVideos(response.data);
             })
