@@ -1,0 +1,11 @@
+/* src/components/HomePage.css */
+.homepage {
+    padding: 20px;
+}
+
+.video-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+}
