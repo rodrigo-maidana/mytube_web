@@ -1,6 +1,6 @@
 // src/components/HomePage.jsx
 import React, { useEffect, useState } from 'react';
-import axiosInstance from './axiosinstance'
+import axiosInstance from './axiosinstance';
 import VideoCard from './VideoCard';
 import './HomePage.css';
 

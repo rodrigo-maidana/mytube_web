@@ -1,4 +1,3 @@
-/* src/components/VideoCard.css */
 .video-card {
     width: 300px;
     cursor: pointer;
@@ -13,6 +12,13 @@
 
 .video-info {
     padding: 8px 0;
+}
+
+/* Estilos para los enlaces, eliminando el subrayado */
+.video-card a {
+    text-decoration: none;
+    color: inherit;
+    /* Mantiene el color del texto original */
 }
 
 .video-title {
