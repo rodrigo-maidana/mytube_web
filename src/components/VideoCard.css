@@ -1,33 +1,34 @@
-.video-card {
-    width: 300px;
-    cursor: pointer;
-    margin-bottom: 20px;
-}
+    /* src/components/VideoCard.css */
+    .video-card {
+        width: 300px;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
 
-.thumbnail {
-    width: 100%;
-    height: 170px;
-    object-fit: cover;
-}
+    .thumbnail {
+        width: 100%;
+        height: 170px;
+        object-fit: cover;
+    }
 
-.video-info {
-    padding: 8px 0;
-}
+    .video-info {
+        padding: 8px 0;
+    }
 
-/* Estilos para los enlaces, eliminando el subrayado */
-.video-card a {
-    text-decoration: none;
-    color: inherit;
-    /* Mantiene el color del texto original */
-}
+    /* Estilos para los enlaces, eliminando el subrayado */
+    .video-card a {
+        text-decoration: none;
+        color: inherit;
+        /* Mantiene el color del texto original */
+    }
 
-.video-title {
-    font-size: 16px;
-    margin: 0;
-    color: #000;
-}
+    .video-title {
+        font-size: 16px;
+        margin: 0;
+        color: #000;
+    }
 
-.video-description {
-    font-size: 14px;
-    color: #555;
-}
+    .video-description {
+        font-size: 14px;
+        color: #555;
+    }
