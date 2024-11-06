@@ -40,3 +40,43 @@
 .read-the-docs {
   color: #888;
 }
+
+.main-content {
+  padding-top: 70px; /* Ajusta este valor según la altura de tu Navbar */
+}
+
+/* src/components/HomePage.css */
+.homepage {
+  padding: 20px;
+  text-align: center;
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+/* src/App.css */
+.app {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-adjusted {
+  margin-top: 56px; /* Altura del NavBar para alinear el SideBar debajo */
+  width: 240px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: calc(100vh - 56px); /* Altura de la pantalla menos el NavBar */
+  background-color: #343a40;
+  color: white;
+  overflow-y: auto; /* Para hacer scroll si el contenido excede la altura */
+}
+
+.content {
+  margin-left: 240px; /* Ajuste para alinearse con el ancho del SideBar */
+  padding-top: 56px; /* Ajuste para alinearse con el NavBar */
+  width: calc(100% - 240px);
+}

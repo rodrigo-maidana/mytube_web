@@ -1,5 +1,4 @@
 // src/components/VideoCard.jsx
-import React from 'react';
 import './VideoCard.css';
 
 const VideoCard = ({ video }) => {
@@ -10,8 +9,6 @@ const VideoCard = ({ video }) => {
                     <img src={video.thumbnailUrl} alt={video.title} className="thumbnail" />
                     <h4 className="video-title">{video.title}</h4>
                 </a>
-                {/* Puedes incluir la descripción si es necesario */}
-                {/*<p className="video-description">{video.description}</p>*/}
             </div>
         </div>
     );

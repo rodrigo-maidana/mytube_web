@@ -11,20 +11,13 @@ const HomePage = () => {
     const [hasMore, setHasMore] = useState(true);
 
     useEffect(() => {
-        // Cargar la primera página al montar el componente
-        loadVideos(0);
-
-        // Agregar el event listener para el scroll infinito
+        loadVideos(0); // Cargar la primera página al montar el componente
         window.addEventListener('scroll', handleScroll);
-
-        // Limpiar el event listener al desmontar el componente
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     useEffect(() => {
-        if (page > 0) {
-            loadVideos(page);
-        }
+        if (page > 0) loadVideos(page);
     }, [page]);
 
     const loadVideos = (pageNumber) => {
@@ -35,7 +28,7 @@ const HomePage = () => {
                 if (newVideos.length > 0) {
                     setVideos(prevVideos => [...prevVideos, ...newVideos]);
                 } else {
-                    setHasMore(false); // No hay más videos para cargar
+                    setHasMore(false);
                 }
                 setLoading(false);
             })
@@ -47,19 +40,21 @@ const HomePage = () => {
 
     const handleScroll = () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !loading && hasMore) {
-            setPage(prevPage => prevPage + 1); // Cargar la siguiente página
+            setPage(prevPage => prevPage + 1);
         }
     };
 
     return (
-        <div className="homepage">
-            <h1>Bienvenido a MyTube</h1>
-            <div className="video-grid">
+        <div className="container mt-4">
+            <h1 className="text-center mb-4">Bienvenido a MyTube</h1>
+            <div className="row">
                 {videos.map(video => (
-                    <VideoCard key={video._id} video={video} />
+                    <div key={video._id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <VideoCard video={video} />
+                    </div>
                 ))}
             </div>
-            {loading && <p>Cargando...</p>}
+            {loading && <p className="text-center">Cargando...</p>}
         </div>
     );
 };

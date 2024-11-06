@@ -1,4 +1,7 @@
+// src/components/RegisterForm.jsx
 import React, { useState } from "react";
+import { Form, Button, Alert, Container, Card } from "react-bootstrap";
+import axiosInstance from "./axiosinstance";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +13,6 @@ const RegisterForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Función para manejar los cambios en los inputs del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -19,21 +21,11 @@ const RegisterForm = () => {
     });
   };
 
-  // Función para enviar el formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await fetch("http://localhost:8081/users/save", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
+      const response = await axiosInstance.post("/users/save", formData);
+      if (response.status === 200 || response.status === 201) {
         setSuccess("Usuario registrado con éxito");
         setError("");
         setFormData({
@@ -52,44 +44,58 @@ const RegisterForm = () => {
   };
 
   return (
-    <div>
-      <h2>Registro de Usuario</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Registrar</button>
-      </form>
-    </div>
+      <Container className="d-flex justify-content-center align-items-center mt-5" style={{ minHeight: "80vh" }}>
+        <Card style={{ width: "100%", maxWidth: "500px" }} className="p-4 shadow">
+          <Card.Body>
+            <h2 className="text-center mb-4">Registro de Usuario</h2>
+
+            {error && <Alert variant="danger" className="text-center">{error}</Alert>}
+            {success && <Alert variant="success" className="text-center">{success}</Alert>}
+
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="formUsername">
+                <Form.Label>Nombre de Usuario</Form.Label>
+                <Form.Control
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                    placeholder="Ingresa tu nombre de usuario"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formEmail">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    placeholder="Ingresa tu email"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formPassword">
+                <Form.Label>Contraseña</Form.Label>
+                <Form.Control
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    placeholder="Ingresa tu contraseña"
+                />
+              </Form.Group>
+
+              <Button variant="primary" type="submit" className="w-100 mt-3">
+                Registrar
+              </Button>
+            </Form>
+          </Card.Body>
+        </Card>
+      </Container>
   );
 };
 

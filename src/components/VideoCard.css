@@ -1,14 +1,32 @@
     /* src/components/VideoCard.css */
     .video-card {
-        width: 300px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        transition: transform 0.2s;
         cursor: pointer;
-        margin-bottom: 20px;
+    }
+
+    .video-card:hover {
+        transform: scale(1.05); /* Efecto de aumento al pasar el ratón */
     }
 
     .thumbnail {
         width: 100%;
-        height: 170px;
-        object-fit: cover;
+        height: auto;
+        border-radius: 4px;
+    }
+
+    .video-title {
+        font-size: 1rem;
+        color: #333;
+        margin: 8px 0;
+        text-align: center;
     }
 
     .video-info {

@@ -1,0 +1,43 @@
+/* src/components/navbar/Sidebar.css */
+.sidebar {
+    width: 240px;
+    height: calc(100vh - 56px);
+    position: fixed;
+    top: 56px;
+    left: 0;
+    background-color: #343a40;
+    color: #ffffff;
+    padding-top: 20px;
+    transition: width 0.3s;
+}
+
+.sidebar.collapsed {
+    width: 80px; /* Ancho reducido en estado colapsado */
+}
+
+.nav-link {
+    color: #ffffff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: #505050;
+}
+
+.icon {
+    margin-right: 10px;
+    font-size: 1.5rem;
+}
+
+.sidebar.collapsed .icon {
+    margin-right: 0; /* Ajuste del margen en estado colapsado */
+}
+
+.sidebar.collapsed .nav-link span {
+    display: none; /* Ocultar el texto de los enlaces en estado colapsado */
+}
