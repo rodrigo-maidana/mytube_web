@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Dropdown, Form, InputGroup } from "react-bootstrap";
 import axiosInstance from "../axiosinstance"; // Ruta corregida
+import { useNavigate } from "react-router-dom";
 import "./ChannelPage.css";
 
 const ChannelPage = () => {
@@ -9,6 +10,7 @@ const ChannelPage = () => {
     const [error, setError] = useState("");
     const [sortOrder, setSortOrder] = useState("asc"); // Estado para el orden de suscriptores
     const [searchQuery, setSearchQuery] = useState(""); // Estado para la consulta de búsqueda
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchChannels();
@@ -50,6 +52,11 @@ const ChannelPage = () => {
         }
     };
 
+    // Función para manejar la navegación a ChannelDetailPage
+    const handleChannelClick = (channelId) => {
+        navigate(`/channels/${channelId}`);
+    };
+
     return (
         <Container className="my-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -88,7 +95,11 @@ const ChannelPage = () => {
             <Row>
                 {channels.map((channel) => (
                     <Col key={channel._id} xs={12} md={4} className="mb-4">
-                        <Button variant="light" className="w-100 text-start channel-button">
+                        <Button
+                            variant="light"
+                            className="w-100 text-start channel-button"
+                            onClick={() => handleChannelClick(channel._id)} // Manejo de clic
+                        >
                             <h5 className="mb-1">{channel.channelName}</h5>
                             <p className="mb-1">{channel.channelDescription || "No hay descripción disponible."}</p>
                             <p className="mb-0"><strong>Suscriptores:</strong> {channel.subscribersCount}</p>
