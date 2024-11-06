@@ -9,34 +9,37 @@ import SideBar from "./components/navbar/SideBar";
 import NavBar from "./components/navbar/NavBar";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LoginPage from "./components/login/LoginPage.jsx";
-
+import ProfileForm from "./components/ProfileForm";
 function App() {
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-    const toggleSidebar = () => {
-        setIsSidebarCollapsed(!isSidebarCollapsed);
-    };
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
 
-    return (
-        <Router>
-            <div className="app">
-                <NavBar onToggleSidebar={toggleSidebar} />
+  return (
+    <Router>
+      <div className="app">
+        <NavBar onToggleSidebar={toggleSidebar} />
 
-                <div className="d-flex">
-                    <SideBar isCollapsed={isSidebarCollapsed} />
-                    <div className={`content ${isSidebarCollapsed ? "collapsed" : ""} p-4`}>
-                        <Routes>
-                            <Route path="/" element={<HomePage />} />
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/register" element={<RegisterForm />} />
-                            <Route path="/subscriptions" element={<SubscriptionsTable />} />
-                            <Route path="/channels" element={<ChannelPage />} />
-                        </Routes>
-                    </div>
-                </div>
-            </div>
-        </Router>
-    );
+        <div className="d-flex">
+          <SideBar isCollapsed={isSidebarCollapsed} />
+          <div
+            className={`content ${isSidebarCollapsed ? "collapsed" : ""} p-4`}
+          >
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterForm />} />
+              <Route path="/subscriptions" element={<SubscriptionsTable />} />
+              <Route path="/channels" element={<ChannelPage />} />
+              <Route path="/profile" element={<ProfileForm />} />
+            </Routes>
+          </div>
+        </div>
+      </div>
+    </Router>
+  );
 }
 
 export default App;

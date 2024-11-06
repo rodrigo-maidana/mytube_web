@@ -24,10 +24,25 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Primer POST a /users/save
       const response = await axiosInstance.post("/users/save", formData);
       if (response.status === 200 || response.status === 201) {
         setSuccess("Usuario registrado con éxito");
         setError("");
+
+        // Segundo POST a /auth/register con email y password
+        const authResponse = await axiosInstance.post("/auth/register", {
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (authResponse.status === 200 || authResponse.status === 201) {
+          setSuccess("Registro completado y autenticación creada");
+        } else {
+          setError("Error al registrar en autenticación");
+        }
+
+        // Limpiar los campos del formulario
         setFormData({
           username: "",
           email: "",
@@ -44,58 +59,69 @@ const RegisterForm = () => {
   };
 
   return (
-      <Container className="d-flex justify-content-center align-items-center mt-5" style={{ minHeight: "80vh" }}>
-        <Card style={{ width: "100%", maxWidth: "500px" }} className="p-4 shadow">
-          <Card.Body>
-            <h2 className="text-center mb-4">Registro de Usuario</h2>
+    <Container
+      className="d-flex justify-content-center align-items-center mt-5"
+      style={{ minHeight: "80vh" }}
+    >
+      <Card style={{ width: "100%", maxWidth: "500px" }} className="p-4 shadow">
+        <Card.Body>
+          <h2 className="text-center mb-4">Registro de Usuario</h2>
 
-            {error && <Alert variant="danger" className="text-center">{error}</Alert>}
-            {success && <Alert variant="success" className="text-center">{success}</Alert>}
+          {error && (
+            <Alert variant="danger" className="text-center">
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="success" className="text-center">
+              {success}
+            </Alert>
+          )}
 
-            <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="formUsername">
-                <Form.Label>Nombre de Usuario</Form.Label>
-                <Form.Control
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                    placeholder="Ingresa tu nombre de usuario"
-                />
-              </Form.Group>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="formUsername">
+              <Form.Label>Nombre de Usuario</Form.Label>
+              <Form.Control
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+                placeholder="Ingresa tu nombre de usuario"
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formEmail">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="Ingresa tu email"
-                />
-              </Form.Group>
+            <Form.Group className="mb-3" controlId="formEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                placeholder="Ingresa tu email"
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formPassword">
-                <Form.Label>Contraseña</Form.Label>
-                <Form.Control
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    placeholder="Ingresa tu contraseña"
-                />
-              </Form.Group>
+            <Form.Group className="mb-3" controlId="formPassword">
+              <Form.Label>Contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Ingresa tu contraseña"
+              />
+            </Form.Group>
 
-              <Button variant="primary" type="submit" className="w-100 mt-3">
-                Registrar
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
-      </Container>
+            <Button variant="primary" type="submit" className="w-100 mt-3">
+              Registrar
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 
