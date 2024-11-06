@@ -10,6 +10,7 @@ import NavBar from "./components/navbar/NavBar";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LoginPage from "./components/login/LoginPage.jsx";
 import ProfileForm from "./components/ProfileForm";
+import UserTable from "./components/UserTable.jsx";
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -34,6 +35,7 @@ function App() {
               <Route path="/subscriptions" element={<SubscriptionsTable />} />
               <Route path="/channels" element={<ChannelPage />} />
               <Route path="/profile" element={<ProfileForm />} />
+              <Route path="/profile/all" element={<UserTable />} />
             </Routes>
           </div>
         </div>
