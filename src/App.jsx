@@ -5,7 +5,9 @@ import RegisterForm from "./components/RegisterForm";
 import HomePage from "./components/HomePage";
 import SubscriptionsTable from "./components/SubscriptionsTable";
 import ChannelPage from "./components/canales/ChannelPage";
-import ChannelDetailPage from "./components/canales/ChannelDetailPage"; // Agregar importación
+import ChannelDetailPage from "./components/canales/ChannelDetailPage";
+import ChannelAdminPage from "./components/canales/ChannelAdminPage.jsx";
+import PlaylistCrudPage from "./components/playlists/PlaylistCrudPage.jsx";
 import SideBar from "./components/navbar/SideBar";
 import NavBar from "./components/navbar/NavBar";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -36,6 +38,8 @@ function App() {
                 <Route path="/channels/:channelId" element={<ChannelDetailPage />} /> {/* Ruta de detalle */}
                 <Route path="/profile" element={<ProfileForm />} />
                 <Route path="/profile/all" element={<UserTable />} />
+                <Route path="/channels/crud" element={<ChannelAdminPage />} />
+                <Route path="/playlists/crud" element={<PlaylistCrudPage />} />
               </Routes>
             </div>
           </div>

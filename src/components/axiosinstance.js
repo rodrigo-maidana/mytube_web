@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://mytube.rodrigomaidana.com:8080/',
+  baseURL: 'http://mytube.rodrigomaidana.com:8082/',
 });
 
 // Interceptor para incluir el token en las solicitudes (excepto /auth/)
