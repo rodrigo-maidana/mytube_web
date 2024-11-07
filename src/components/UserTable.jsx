@@ -12,7 +12,9 @@ const UserTable = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get("/users/profile/all");
+        const response = await axiosInstance.get(
+          "http://mytube.rodrigomaidana.com:8081/users/all"
+        );
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -49,7 +51,6 @@ const UserTable = () => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>ID</th>
             <th>Username</th>
             <th>Email</th>
             <th>Actions</th>
@@ -57,26 +58,27 @@ const UserTable = () => {
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
+            <tr key={user._id}>
               <td>{user.username}</td>
               <td>{user.email}</td>
               <td>
-                <Button
-                  variant="warning"
-                  size="sm"
-                  className="me-2"
-                  onClick={() => handleEdit(user)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleDelete(user.id)}
-                >
-                  Delete
-                </Button>
+                <div className="d-flex">
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    className="me-2"
+                    onClick={() => handleEdit(user)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(user.id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </td>
             </tr>
           ))}

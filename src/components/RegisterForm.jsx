@@ -1,7 +1,8 @@
-// src/components/RegisterForm.jsx
 import React, { useState } from "react";
 import { Form, Button, Alert, Container, Card } from "react-bootstrap";
 import axiosInstance from "./axiosinstance";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const RegisterForm = () => {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,26 +25,24 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    const toastId = toast.info("Creando usuario...", { autoClose: false });
+
     try {
-      // Primer POST a /users/save
-      const response = await axiosInstance.post("/users/save", formData);
+      console.log(formData);
+      const response = await axiosInstance.post(
+        "http://mytube.rodrigomaidana.com:8081/users/save",
+        formData
+      );
       if (response.status === 200 || response.status === 201) {
         setSuccess("Usuario registrado con éxito");
         setError("");
-
-        // Segundo POST a /auth/register con email y password
-        const authResponse = await axiosInstance.post("/auth/register", {
-          email: formData.email,
-          password: formData.password,
+        toast.update(toastId, {
+          render: "Registro completado y autenticación creada",
+          type: "success",
+          autoClose: 5000,
         });
 
-        if (authResponse.status === 200 || authResponse.status === 201) {
-          setSuccess("Registro completado y autenticación creada");
-        } else {
-          setError("Error al registrar en autenticación");
-        }
-
-        // Limpiar los campos del formulario
         setFormData({
           username: "",
           email: "",
@@ -51,10 +51,22 @@ const RegisterForm = () => {
       } else {
         setError("Error al registrar el usuario");
         setSuccess("");
+        toast.update(toastId, {
+          render: "Error al registrar el usuario",
+          type: "error",
+          autoClose: 5000,
+        });
       }
     } catch (error) {
       setError("Error en la conexión con el servidor");
       setSuccess("");
+      toast.update(toastId, {
+        render: "Error en la conexión con el servidor",
+        type: "error",
+        autoClose: 5000,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -88,6 +100,7 @@ const RegisterForm = () => {
                 onChange={handleChange}
                 required
                 placeholder="Ingresa tu nombre de usuario"
+                disabled={isLoading}
               />
             </Form.Group>
 
@@ -100,6 +113,7 @@ const RegisterForm = () => {
                 onChange={handleChange}
                 required
                 placeholder="Ingresa tu email"
+                disabled={isLoading}
               />
             </Form.Group>
 
@@ -112,15 +126,23 @@ const RegisterForm = () => {
                 onChange={handleChange}
                 required
                 placeholder="Ingresa tu contraseña"
+                disabled={isLoading}
               />
             </Form.Group>
 
-            <Button variant="primary" type="submit" className="w-100 mt-3">
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-100 mt-3"
+              disabled={isLoading}
+            >
               Registrar
             </Button>
           </Form>
         </Card.Body>
       </Card>
+
+      <ToastContainer />
     </Container>
   );
 };
