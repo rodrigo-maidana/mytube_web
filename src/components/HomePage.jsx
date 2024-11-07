@@ -23,7 +23,7 @@ const HomePage = () => {
     // Cargar videos de la página especificada
     const loadVideos = (pageNumber) => {
         setLoading(true);
-        axiosInstance.get(`videos?page=${pageNumber}`)
+        axiosInstance.get(`http://mytube.rodrigomaidana.com:8083/videos?page=${pageNumber}`)
             .then(response => {
                 const newVideos = response.data;
                 if (newVideos.length > 0) {

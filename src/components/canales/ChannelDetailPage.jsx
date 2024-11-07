@@ -41,7 +41,7 @@ const ChannelDetailPage = () => {
     // Obtener videos del canal
     const fetchVideos = async () => {
         try {
-            const response = await axiosInstance.get(`/videos?channelId=${channelId}`);
+            const response = await axiosInstance.get(`http://mytube.rodrigomaidana.com:8083/videos?channelId=${channelId}`);
             setVideos(response.data.filter(video => video.channelId === parseInt(channelId)));
         } catch (err) {
             setError("Error al obtener los videos. Inténtalo de nuevo.");

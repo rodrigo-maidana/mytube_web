@@ -24,8 +24,12 @@ const ProfileForm = ({ userId }) => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const userResponse = await axiosInstance.get(`/users/4`);
-        const profileResponse = await axiosInstance.get(`/profile/1`);
+        const userResponse = await axiosInstance.get(
+            "http://mytube.rodrigomaidana.com:8081/users/4"
+        );
+        const profileResponse = await axiosInstance.get(
+            "http://mytube.rodrigomaidana.com:8081/profile/1"
+        );
 
         setProfile({
           username: userResponse.data.username,
@@ -59,7 +63,7 @@ const ProfileForm = ({ userId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.put(`/profile/${userId}`, editForm);
+      const response = await axiosInstance.put(`http://mytube.rodrigomaidana.com:8083/profile/${userId}`, editForm);
       if (response.status === 200 || response.status === 201) {
         setSuccess("Perfil actualizado con éxito");
         setError("");
