@@ -20,12 +20,10 @@ const ProfileForm = ({ userId }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Fetch username and registration date on component mount
+  // Obtener datos del perfil al montar el componente
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        //harcodeado
-        //PROBAR CUANDO FUNCIONA EL CORS
         const userResponse = await axiosInstance.get(`/users/4`);
         const profileResponse = await axiosInstance.get(`/profile/1`);
 
@@ -83,100 +81,100 @@ const ProfileForm = ({ userId }) => {
   };
 
   return (
-    <Container
-      className="d-flex justify-content-center align-items-center mt-5"
-      style={{ minHeight: "80vh" }}
-    >
-      <Card style={{ width: "100%", maxWidth: "500px" }} className="p-4 shadow">
-        <Card.Body>
-          <h2 className="text-center mb-4">Profile</h2>
+      <Container
+          className="d-flex justify-content-center align-items-center mt-5"
+          style={{ minHeight: "80vh" }}
+      >
+        <Card style={{ width: "100%", maxWidth: "500px" }} className="p-4 shadow">
+          <Card.Body>
+            <h2 className="text-center mb-4">Perfil</h2>
 
-          {error && (
-            <Alert variant="danger" className="text-center">
-              {error}
-            </Alert>
-          )}
-          {success && (
-            <Alert variant="success" className="text-center">
-              {success}
-            </Alert>
-          )}
+            {error && (
+                <Alert variant="danger" className="text-center">
+                  {error}
+                </Alert>
+            )}
+            {success && (
+                <Alert variant="success" className="text-center">
+                  {success}
+                </Alert>
+            )}
 
-          {isEditing ? (
-            <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="formBirthdate">
-                <Form.Label>Birthdate</Form.Label>
-                <Form.Control
-                  type="date"
-                  name="birthdate"
-                  value={editForm.birthdate}
-                  onChange={handleChange}
-                />
-              </Form.Group>
+            {isEditing ? (
+                <Form onSubmit={handleSubmit}>
+                  <Form.Group className="mb-3" controlId="formBirthdate">
+                    <Form.Label>Fecha de Nacimiento</Form.Label>
+                    <Form.Control
+                        type="date"
+                        name="birthdate"
+                        value={editForm.birthdate}
+                        onChange={handleChange}
+                    />
+                  </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formBio">
-                <Form.Label>Bio</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  name="bio"
-                  value={editForm.bio}
-                  onChange={handleChange}
-                  rows={3}
-                />
-              </Form.Group>
+                  <Form.Group className="mb-3" controlId="formBio">
+                    <Form.Label>Biografía</Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        name="bio"
+                        value={editForm.bio}
+                        onChange={handleChange}
+                        rows={3}
+                    />
+                  </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formAvatarUrl">
-                <Form.Label>Avatar URL</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="avatarUrl"
-                  value={editForm.avatarUrl}
-                  onChange={handleChange}
-                />
-              </Form.Group>
+                  <Form.Group className="mb-3" controlId="formAvatarUrl">
+                    <Form.Label>URL del Avatar</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="avatarUrl"
+                        value={editForm.avatarUrl}
+                        onChange={handleChange}
+                    />
+                  </Form.Group>
 
-              <div className="d-flex justify-content-end">
-                <Button
-                  variant="secondary"
-                  onClick={() => setIsEditing(false)}
-                  className="me-2"
-                >
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit">
-                  Save
-                </Button>
-              </div>
-            </Form>
-          ) : (
-            <div className="space-y-4">
-              <p>
-                <strong>Username:</strong> {profile.username}
-              </p>
-              <p>
-                <strong>Registration Date:</strong> {profile.registrationDate}
-              </p>
-              <p>
-                <strong>Birthdate:</strong> {profile.birthdate || "Not set"}
-              </p>
-              <p>
-                <strong>Bio:</strong> {profile.bio || "Not set"}
-              </p>
-              <p>
-                <strong>Avatar URL:</strong> {profile.avatarUrl || "Not set"}
-              </p>
-              <Button
-                variant="link"
-                className="p-0"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit Profile
-              </Button>
-            </div>
-          )}
-        </Card.Body>
-      </Card>
-    </Container>
+                  <div className="d-flex justify-content-end">
+                    <Button
+                        variant="secondary"
+                        onClick={() => setIsEditing(false)}
+                        className="me-2"
+                    >
+                      Cancelar
+                    </Button>
+                    <Button variant="primary" type="submit">
+                      Guardar
+                    </Button>
+                  </div>
+                </Form>
+            ) : (
+                <div className="space-y-4">
+                  <p>
+                    <strong>Nombre de Usuario:</strong> {profile.username}
+                  </p>
+                  <p>
+                    <strong>Fecha de Registro:</strong> {profile.registrationDate}
+                  </p>
+                  <p>
+                    <strong>Fecha de Nacimiento:</strong> {profile.birthdate || "No establecida"}
+                  </p>
+                  <p>
+                    <strong>Biografía:</strong> {profile.bio || "No establecida"}
+                  </p>
+                  <p>
+                    <strong>URL del Avatar:</strong> {profile.avatarUrl || "No establecida"}
+                  </p>
+                  <Button
+                      variant="link"
+                      className="p-0"
+                      onClick={() => setIsEditing(true)}
+                  >
+                    Editar Perfil
+                  </Button>
+                </div>
+            )}
+          </Card.Body>
+        </Card>
+      </Container>
   );
 };
 

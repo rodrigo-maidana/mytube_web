@@ -1,22 +1,22 @@
 // src/components/canales/ChannelPage.jsx
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Dropdown, Form, InputGroup } from "react-bootstrap";
-import axiosInstance from "../axiosinstance"; // Ruta corregida
+import axiosInstance from "../axiosinstance";
 import { useNavigate } from "react-router-dom";
 import "./ChannelPage.css";
 
 const ChannelPage = () => {
     const [channels, setChannels] = useState([]);
     const [error, setError] = useState("");
-    const [sortOrder, setSortOrder] = useState("asc"); // Estado para el orden de suscriptores
-    const [searchQuery, setSearchQuery] = useState(""); // Estado para la consulta de búsqueda
+    const [sortOrder, setSortOrder] = useState("asc");
+    const [searchQuery, setSearchQuery] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchChannels();
     }, []);
 
-    // Función para obtener todos los canales
+    // Obtener todos los canales
     const fetchChannels = async () => {
         try {
             const response = await axiosInstance.get("/channels");
@@ -26,7 +26,7 @@ const ChannelPage = () => {
         }
     };
 
-    // Función para ordenar los canales
+    // Ordenar los canales por suscriptores
     const sortChannels = (order) => {
         const sortedChannels = [...channels].sort((a, b) => {
             return order === "asc"
@@ -37,11 +37,11 @@ const ChannelPage = () => {
         setSortOrder(order);
     };
 
-    // Función para manejar la búsqueda de canales por nombre
+    // Buscar canales por nombre
     const handleSearch = async (event) => {
         event.preventDefault();
         if (searchQuery.trim() === "") {
-            fetchChannels(); // Si la búsqueda está vacía, obtener todos los canales
+            fetchChannels();
             return;
         }
         try {
@@ -52,7 +52,7 @@ const ChannelPage = () => {
         }
     };
 
-    // Función para manejar la navegación a ChannelDetailPage
+    // Navegar a la página de detalles del canal
     const handleChannelClick = (channelId) => {
         navigate(`/channels/${channelId}`);
     };
@@ -98,7 +98,7 @@ const ChannelPage = () => {
                         <Button
                             variant="light"
                             className="w-100 text-start channel-button"
-                            onClick={() => handleChannelClick(channel._id)} // Manejo de clic
+                            onClick={() => handleChannelClick(channel._id)}
                         >
                             <h5 className="mb-1">{channel.channelName}</h5>
                             <p className="mb-1">{channel.channelDescription || "No hay descripción disponible."}</p>

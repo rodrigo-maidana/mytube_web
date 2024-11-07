@@ -1,7 +1,7 @@
 // src/components/SubscriptionsTable.jsx
 import React, { useEffect, useState } from "react";
 import { Table, Spinner, Alert } from "react-bootstrap";
-import axiosInstance from "./axiosinstance"; // Asegúrate de importar la instancia de axios
+import axiosInstance from "./axiosinstance";
 
 function SubscriptionsTable() {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -9,13 +9,13 @@ function SubscriptionsTable() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Función para obtener las suscripciones
+    // Obtener suscripciones
     const fetchSubscriptions = async () => {
       try {
         const response = await axiosInstance.get("/subscriptions/all");
         setSubscriptions(response.data);
       } catch (error) {
-        console.error("Error fetching subscriptions:", error);
+        console.error("Error al obtener suscripciones:", error);
         setError("Error al obtener las suscripciones");
       } finally {
         setLoading(false);
@@ -32,7 +32,7 @@ function SubscriptionsTable() {
         {loading ? (
             <div className="text-center">
               <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
+                <span className="visually-hidden">Cargando...</span>
               </Spinner>
             </div>
         ) : error ? (
@@ -45,7 +45,7 @@ function SubscriptionsTable() {
               <tr>
                 <th>User ID</th>
                 <th>Channel ID</th>
-                <th>Subscription Date</th>
+                <th>Fecha de Suscripción</th>
               </tr>
               </thead>
               <tbody>

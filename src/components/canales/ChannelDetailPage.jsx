@@ -18,7 +18,7 @@ const ChannelDetailPage = () => {
         fetchVideos();
     }, [channelId]);
 
-    // Función para obtener los detalles del canal
+    // Obtener detalles del canal
     const fetchChannel = async () => {
         try {
             const response = await axiosInstance.get(`/channels/${channelId}`);
@@ -28,7 +28,7 @@ const ChannelDetailPage = () => {
         }
     };
 
-    // Función para obtener las playlists relacionadas al canal
+    // Obtener playlists del canal
     const fetchPlaylists = async () => {
         try {
             const response = await axiosInstance.get(`/playlists?channelId=${channelId}`);
@@ -38,7 +38,7 @@ const ChannelDetailPage = () => {
         }
     };
 
-    // Función para obtener los videos relacionados al canal específico usando el channelId
+    // Obtener videos del canal
     const fetchVideos = async () => {
         try {
             const response = await axiosInstance.get(`/videos?channelId=${channelId}`);
@@ -48,10 +48,10 @@ const ChannelDetailPage = () => {
         }
     };
 
-    // Función para suscribirse al canal
+    // Suscribirse al canal
     const handleSubscribe = async () => {
         try {
-            const userId = localStorage.getItem("userId"); // Obtiene userId del localStorage
+            const userId = localStorage.getItem("userId");
             if (!userId) {
                 setError("Por favor, inicia sesión para suscribirte.");
                 return;
@@ -69,7 +69,6 @@ const ChannelDetailPage = () => {
             setError("Error al suscribirse al canal. Inténtalo de nuevo.");
         }
     };
-
 
     return (
         <Container className="channel-detail-page">

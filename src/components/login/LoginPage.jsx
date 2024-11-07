@@ -14,6 +14,7 @@ const LoginPage = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    // Enviar formulario de inicio de sesión
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {

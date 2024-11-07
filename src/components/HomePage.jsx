@@ -11,7 +11,7 @@ const HomePage = () => {
     const [hasMore, setHasMore] = useState(true);
 
     useEffect(() => {
-        loadVideos(0); // Cargar la primera página al montar el componente
+        loadVideos(0);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -20,6 +20,7 @@ const HomePage = () => {
         if (page > 0) loadVideos(page);
     }, [page]);
 
+    // Cargar videos de la página especificada
     const loadVideos = (pageNumber) => {
         setLoading(true);
         axiosInstance.get(`videos?page=${pageNumber}`)
@@ -38,6 +39,7 @@ const HomePage = () => {
             });
     };
 
+    // Manejar scroll para cargar más videos cuando se acerca al final de la página
     const handleScroll = () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !loading && hasMore) {
             setPage(prevPage => prevPage + 1);

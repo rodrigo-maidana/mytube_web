@@ -42,7 +42,7 @@
 }
 
 .main-content {
-  padding-top: 70px; /* Ajusta este valor según la altura de tu Navbar */
+  padding-top: 70px; /* Espacio ajustado para la altura de la Navbar */
 }
 
 /* src/components/HomePage.css */
@@ -64,19 +64,19 @@
 }
 
 .sidebar-adjusted {
-  margin-top: 56px; /* Altura del NavBar para alinear el SideBar debajo */
+  margin-top: 56px; /* Alinear el SideBar debajo del NavBar */
   width: 240px;
   position: fixed;
   top: 0;
   left: 0;
-  height: calc(100vh - 56px); /* Altura de la pantalla menos el NavBar */
+  height: calc(100vh - 56px); /* Altura de la pantalla menos la del NavBar */
   background-color: #343a40;
   color: white;
-  overflow-y: auto; /* Para hacer scroll si el contenido excede la altura */
+  overflow-y: auto;
 }
 
 .content {
-  margin-left: 240px; /* Ajuste para alinearse con el ancho del SideBar */
-  padding-top: 56px; /* Ajuste para alinearse con el NavBar */
+  margin-left: 240px; /* Espacio para alinearse con el ancho del SideBar */
+  padding-top: 56px; /* Espacio para alinearse con el NavBar */
   width: calc(100% - 240px);
 }

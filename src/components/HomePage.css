@@ -1,60 +1,58 @@
-        /* src/components/HomePage.css */
-        /* src/components/HomePage.css */
-        .homepage {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+/* src/components/HomePage.css */
 
-            min-height: 100vh;
-        }
+.homepage {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
 
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(250px, 1fr)); /* 5 columnas con un ancho mínimo */
-            gap: 16px;
-            max-width: 1400px; /* Ancho máximo para centrar la cuadrícula en pantallas grandes */
-            width: 100%;
-            justify-items: center; /* Centra las tarjetas dentro de la cuadrícula */
-            margin: 0 auto; /* Centrar la cuadrícula */
-        }
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(250px, 1fr));
+    gap: 16px;
+    max-width: 1400px;
+    width: 100%;
+    justify-items: center;
+    margin: 0 auto;
+}
 
-        .video-card {
-        /* Estilo opcional para el contenedor de cada tarjeta */
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        overflow: hidden;
-        transition: transform 0.3s;
-    }
+.video-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    transition: transform 0.3s;
+}
 
-    .video-card:hover {
-        transform: scale(1.05);
-    }
+.video-card:hover {
+    transform: scale(1.05);
+}
 
-    .pagination-controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-    .pagination-controls select,
-    .pagination-controls button {
-        padding: 5px 10px;
-        font-size: 14px;
-    }
+.pagination-controls select,
+.pagination-controls button {
+    padding: 5px 10px;
+    font-size: 14px;
+}
 
-    .load-more-btn {
-        margin: 20px auto;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-    }
+.load-more-btn {
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
 
-    .load-more-btn:hover {
-        background-color: #0056b3;
-    }
+.load-more-btn:hover {
+    background-color: #0056b3;
+}
