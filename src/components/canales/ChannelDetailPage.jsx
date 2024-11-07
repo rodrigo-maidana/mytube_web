@@ -11,11 +11,15 @@ const ChannelDetailPage = () => {
     const [playlists, setPlaylists] = useState([]);
     const [videos, setVideos] = useState([]);
     const [error, setError] = useState("");
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
 
     useEffect(() => {
         fetchChannel();
         fetchPlaylists();
-        fetchVideos();
+        fetchVideos(0); // Cargar la primera página de videos
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
     }, [channelId]);
 
     // Obtener detalles del canal
@@ -38,15 +42,32 @@ const ChannelDetailPage = () => {
         }
     };
 
-    // Obtener videos del canal
-    const fetchVideos = async () => {
+    // Obtener videos del canal, según la página
+    const fetchVideos = async (pageNumber) => {
         try {
-            const response = await axiosInstance.get(`http://mytube.rodrigomaidana.com:8083/videos?channelId=${channelId}`);
-            setVideos(response.data.filter(video => video.channelId === parseInt(channelId)));
+            const response = await axiosInstance.get(`http://mytube.rodrigomaidana.com:8083/videos?channelId=${channelId}&page=${pageNumber}`);
+            const newVideos = response.data.filter(video => video.channelId === parseInt(channelId)); // Filtrar videos por channelId
+
+            if (newVideos.length > 0) {
+                setVideos((prevVideos) => [...prevVideos, ...newVideos]);
+            } else {
+                setHasMore(false); // No hay más videos para cargar
+            }
         } catch (err) {
             setError("Error al obtener los videos. Inténtalo de nuevo.");
         }
     };
+
+    // Manejar el scroll para cargar más videos
+    const handleScroll = () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && hasMore) {
+            setPage((prevPage) => prevPage + 1);
+        }
+    };
+
+    useEffect(() => {
+        if (page > 0) fetchVideos(page);
+    }, [page]);
 
     // Suscribirse al canal
     const handleSubscribe = async () => {
@@ -57,7 +78,7 @@ const ChannelDetailPage = () => {
                 return;
             }
 
-            const response = await axiosInstance.post("/subscriptions/save", {
+            const response = await axiosInstance.post("http://mytube.rodrigomaidana.com:8081/subscriptions/save", {
                 userId: parseInt(userId, 10),
                 channelId: parseInt(channelId, 10),
             });
@@ -115,6 +136,7 @@ const ChannelDetailPage = () => {
                                 </Col>
                             ))}
                         </Row>
+                        {hasMore && <p className="text-center">Cargando más videos...</p>}
                     </div>
                 </>
             )}
