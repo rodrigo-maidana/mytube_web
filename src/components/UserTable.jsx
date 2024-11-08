@@ -16,7 +16,7 @@ const UserTable = () => {
   const fetchUsers = async () => {
     try {
       const response = await axiosInstance.get(
-        "http://mytube.rodrigomaidana.com:8081/users/all"
+        "/users/all"
       );
       setUsers(response.data);
     } catch (error) {
@@ -35,7 +35,7 @@ const UserTable = () => {
   const handleSaveChanges = async () => {
     try {
       const response = await axiosInstance.put(
-        `http://mytube.rodrigomaidana.com:8081/users/${selectedUser._id}`,
+        `/users/${selectedUser._id}`,
         editedUser
       );
       console.log("Usuario actualizado:", response.data);
@@ -57,7 +57,7 @@ const UserTable = () => {
   const handleDelete = async (userId) => {
     try {
       await axiosInstance.delete(
-        `http://mytube.rodrigomaidana.com:8081/users/${userId}`
+        `/users/${userId}`
       );
       console.log("Usuario eliminado con éxito");
 

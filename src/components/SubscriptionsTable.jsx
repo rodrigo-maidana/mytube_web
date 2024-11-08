@@ -12,9 +12,7 @@ function SubscriptionsTable() {
     // Obtener suscripciones
     const fetchSubscriptions = async () => {
       try {
-        const response = await axiosInstance.get(
-          "http://mytube.rodrigomaidana.com:8081/subscriptions/all"
-        );
+        const response = await axiosInstance.get("/subscriptions/all");
         setSubscriptions(response.data);
 
         // Para cada suscripción, obten el nombre de usuario
