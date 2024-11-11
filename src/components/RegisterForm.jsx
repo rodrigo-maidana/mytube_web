@@ -30,7 +30,7 @@ const RegisterForm = () => {
 
     try {
       const response = await axiosInstance.post(
-          "http://mytube.rodrigomaidana.com:8081/users/save",
+          "/users/save",
           formData
       );
       if (response.status === 200 || response.status === 201) {

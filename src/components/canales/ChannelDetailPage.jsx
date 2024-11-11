@@ -45,7 +45,7 @@ const ChannelDetailPage = () => {
     // Obtener videos del canal, según la página
     const fetchVideos = async (pageNumber) => {
         try {
-            const response = await axiosInstance.get(`http://mytube.rodrigomaidana.com:8083/videos?channelId=${channelId}&page=${pageNumber}`);
+            const response = await axiosInstance.get(`/videos?channelId=${channelId}&page=${pageNumber}`);
             const newVideos = response.data.filter(video => video.channelId === parseInt(channelId)); // Filtrar videos por channelId
 
             if (newVideos.length > 0) {
@@ -78,7 +78,7 @@ const ChannelDetailPage = () => {
                 return;
             }
 
-            const response = await axiosInstance.post("http://mytube.rodrigomaidana.com:8081/subscriptions/save", {
+            const response = await axiosInstance.post("/subscriptions/save", {
                 userId: parseInt(userId, 10),
                 channelId: parseInt(channelId, 10),
             });

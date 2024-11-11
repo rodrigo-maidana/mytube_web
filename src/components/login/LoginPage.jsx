@@ -18,7 +18,7 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axiosInstance.post("http://mytube.rodrigomaidana.com:8081/auth/login", formData);
+            const response = await axiosInstance.post("/auth/login", formData);
             if (response.status === 200) {
                 navigate("/");
             } else {

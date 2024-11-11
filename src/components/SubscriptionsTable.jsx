@@ -19,7 +19,7 @@ function SubscriptionsTable() {
         const usernamePromises = response.data.map(async (subscription) => {
           try {
             const userResponse = await axiosInstance.get(
-              `http://mytube.rodrigomaidana.com:8081/users/${subscription.userId}`
+              `/users/${subscription.userId}`
             );
             return {
               userId: subscription.userId,
