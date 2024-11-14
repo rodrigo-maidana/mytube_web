@@ -8,7 +8,7 @@ import { Dropdown } from "react-bootstrap";
 
 const SideBar = ({ isCollapsed }) => {
   return (
-    <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
+    <div className={`sidebar ${isCollapsed ? "collapsed" : ""} bg-dark`}>
       <ul className="nav flex-column">
         <li className="nav-item">
           <Link to="/" className="nav-link">
