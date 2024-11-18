@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Container, Modal } from "react-bootstrap";
+import { Table, Button, Container, Modal, Pagination } from "react-bootstrap";
 import axiosInstance from "./axiosinstance";
 
 const UserTable = () => {
@@ -7,68 +7,73 @@ const UserTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editedUser, setEditedUser] = useState({ username: "", email: "" });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const itemsPerPage = 10;
 
-  // Obtener todos los usuarios al montar el componente
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchUsers(currentPage);
+  }, [currentPage]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (page) => {
     try {
-      const response = await axiosInstance.get(
-        "/users/all"
-      );
-      setUsers(response.data);
+      const response = await axiosInstance.get("/users/all", {
+        params: { page, limit: itemsPerPage },
+      });
+      const newUsers = response.data;
+
+      if (newUsers.length > 0) {
+        setUsers((prevUsers) => [...prevUsers, ...newUsers]);
+      } else {
+        setHasMore(false); // No hay más usuarios para cargar
+      }
     } catch (error) {
       console.error("Error al obtener usuarios:", error);
     }
   };
 
-  // Manejar edición de usuario
+  const handlePageChange = (direction) => {
+    if (direction === "next" && hasMore) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    } else if (direction === "prev" && currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+      setHasMore(true); // Reactiva hasMore al retroceder
+    }
+  };
+
   const handleEdit = (user) => {
     setSelectedUser(user);
     setEditedUser({ username: user.username, email: user.email });
     setShowModal(true);
   };
 
-  // Guardar cambios del usuario
   const handleSaveChanges = async () => {
     try {
       const response = await axiosInstance.put(
         `/users/${selectedUser._id}`,
         editedUser
       );
-      console.log("Usuario actualizado:", response.data);
-
-      // Actualizar la lista de usuarios en el frontend
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user._id === selectedUser._id ? response.data : user
         )
       );
-
       handleCloseModal();
     } catch (error) {
       console.error("Error al actualizar usuario:", error);
     }
   };
 
-  // Manejar eliminación de usuario
   const handleDelete = async (userId) => {
     try {
-      await axiosInstance.delete(
-        `/users/${userId}`
-      );
-      console.log("Usuario eliminado con éxito");
-
-      // Actualizar la lista de usuarios en el frontend
+      await axiosInstance.delete(`/users/${userId}`);
       setUsers(users.filter((user) => user._id !== userId));
     } catch (error) {
       console.error("Error al eliminar usuario:", error);
     }
   };
 
-  // Cerrar modal de edición
+  // Función para cerrar el modal de edición
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedUser(null);
@@ -114,7 +119,24 @@ const UserTable = () => {
         </tbody>
       </Table>
 
-      {/* Modal de edición */}
+      <div className="d-flex justify-content-center">
+        <Button
+          variant="primary"
+          className="me-2"
+          onClick={() => handlePageChange("prev")}
+          disabled={currentPage === 1}
+        >
+          Anterior
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => handlePageChange("next")}
+          disabled={!hasMore}
+        >
+          Siguiente
+        </Button>
+      </div>
+
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Editar Usuario</Modal.Title>

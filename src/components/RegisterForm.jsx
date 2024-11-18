@@ -28,11 +28,11 @@ const RegisterForm = () => {
     setIsLoading(true);
     const toastId = toast.info("Creando usuario...", { autoClose: false });
 
+    //objeto para post
+    const { email, password } = formData;
+    const postData = { email, password };
     try {
-      const response = await axiosInstance.post(
-          "/auth/register",
-          formData
-      );
+      const response = await axiosInstance.post("/auth/register", postData);
       if (response.status === 200 || response.status === 201) {
         setSuccess("Usuario registrado con éxito");
         setError("");
@@ -70,79 +70,79 @@ const RegisterForm = () => {
   };
 
   return (
-      <Container
-          className="d-flex justify-content-center align-items-center mt-5"
-          style={{ minHeight: "80vh" }}
-      >
-        <Card style={{ width: "100%", maxWidth: "500px" }} className="p-4 shadow">
-          <Card.Body>
-            <h2 className="text-center mb-4">Registro de Usuario</h2>
+    <Container
+      className="d-flex justify-content-center align-items-center mt-5"
+      style={{ minHeight: "80vh" }}
+    >
+      <Card style={{ width: "100%", maxWidth: "500px" }} className="p-4 shadow">
+        <Card.Body>
+          <h2 className="text-center mb-4">Registro de Usuario</h2>
 
-            {error && (
-                <Alert variant="danger" className="text-center">
-                  {error}
-                </Alert>
-            )}
-            {success && (
-                <Alert variant="success" className="text-center">
-                  {success}
-                </Alert>
-            )}
+          {error && (
+            <Alert variant="danger" className="text-center">
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="success" className="text-center">
+              {success}
+            </Alert>
+          )}
 
-            <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="formUsername">
-                <Form.Label>Nombre de Usuario</Form.Label>
-                <Form.Control
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                    placeholder="Ingresa tu nombre de usuario"
-                    disabled={isLoading}
-                />
-              </Form.Group>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="formUsername">
+              <Form.Label>Nombre de Usuario</Form.Label>
+              <Form.Control
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+                placeholder="Ingresa tu nombre de usuario"
+                disabled={isLoading}
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formEmail">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="Ingresa tu email"
-                    disabled={isLoading}
-                />
-              </Form.Group>
+            <Form.Group className="mb-3" controlId="formEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                placeholder="Ingresa tu email"
+                disabled={isLoading}
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formPassword">
-                <Form.Label>Contraseña</Form.Label>
-                <Form.Control
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    placeholder="Ingresa tu contraseña"
-                    disabled={isLoading}
-                />
-              </Form.Group>
+            <Form.Group className="mb-3" controlId="formPassword">
+              <Form.Label>Contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Ingresa tu contraseña"
+                disabled={isLoading}
+              />
+            </Form.Group>
 
-              <Button
-                  variant="primary"
-                  type="submit"
-                  className="w-100 mt-3"
-                  disabled={isLoading}
-              >
-                Registrar
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-100 mt-3"
+              disabled={isLoading}
+            >
+              Registrar
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
 
-        <ToastContainer />
-      </Container>
+      <ToastContainer />
+    </Container>
   );
 };
 
