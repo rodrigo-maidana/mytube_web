@@ -29,12 +29,6 @@ const SideBar = ({ isCollapsed }) => {
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/register" className="nav-link">
-            <FaUser className="icon" />
-            {!isCollapsed && <span>Registro</span>}
-          </Link>
-        </li>
-        <li className="nav-item">
           <Link to="/profile/all" className="nav-link">
             {" "}
             {/* Ruta de UserTable */}

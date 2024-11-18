@@ -1,9 +1,13 @@
-// src/components/ProfileForm.jsx
+// src/components/profile/ProfileForm.jsx
 import React, { useState, useEffect } from "react";
 import { Form, Button, Container, Card, Alert } from "react-bootstrap";
-import axiosInstance from "./axiosinstance";
+import axiosInstance from "../axiosinstance.js";
 
+// eslint-disable-next-line react/prop-types
 const ProfileForm = ({ userId }) => {
+  if (typeof userId !== 'number') {
+    throw new Error('userId debe ser un número');
+  }
   const [profile, setProfile] = useState({
     username: "",
     registrationDate: "",
@@ -24,12 +28,8 @@ const ProfileForm = ({ userId }) => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const userResponse = await axiosInstance.get(
-            "/users/4"
-        );
-        const profileResponse = await axiosInstance.get(
-            "/profile/1"
-        );
+        const userResponse = await axiosInstance.get(`/users/${userId}`);
+        const profileResponse = await axiosInstance.get(`/users/profile/${userId}`);
 
         setProfile({
           username: userResponse.data.username,
@@ -63,7 +63,7 @@ const ProfileForm = ({ userId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.put(`/profile/${userId}`, editForm);
+      const response = await axiosInstance.put(`/users/profile/${userId}`, editForm);
       if (response.status === 200 || response.status === 201) {
         setSuccess("Perfil actualizado con éxito");
         setError("");

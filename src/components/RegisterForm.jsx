@@ -30,7 +30,7 @@ const RegisterForm = () => {
 
     try {
       const response = await axiosInstance.post(
-          "/users/save",
+          "/auth/register",
           formData
       );
       if (response.status === 200 || response.status === 201) {

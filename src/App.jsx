@@ -12,7 +12,7 @@ import SideBar from "./components/navbar/SideBar";
 import NavBar from "./components/navbar/NavBar";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LoginPage from "./components/login/LoginPage.jsx";
-import ProfileForm from "./components/ProfileForm";
+import ProfileForm from "./components/profile/ProfileForm.jsx";
 import UserTable from "./components/UserTable.jsx";
 
 function App() {
