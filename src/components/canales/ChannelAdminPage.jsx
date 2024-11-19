@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Table, Toast, ToastContainer } from 'react-bootstrap';
 import axiosInstance from '../axiosinstance';
+import {jwtDecode} from "jwt-decode";  // Importamos jwt-decode para decodificar el token
 
 const ChannelAdminPage = () => {
     const [channels, setChannels] = useState([]);
@@ -30,18 +31,36 @@ const ChannelAdminPage = () => {
     // Crear o actualizar canal
     const saveChannel = async () => {
         try {
-            if (modalType === 'create') {
-                await axiosInstance.post('/channels', currentChannel);
-            } else {
-                await axiosInstance.put(`/channels/${currentChannel._id}`, currentChannel);
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                setError("No se encontró token de autenticación.");
+                setShowToast(true);
+                return;
             }
-            fetchChannels();
-            setShowModal(false);
+
+            const decodedToken = jwtDecode(token); // Decodificamos el token para obtener el userId
+            const userId = decodedToken._id; // Suponiendo que el ID del usuario está en 'id' del token
+
+            const channelData = {
+                ...currentChannel, // Los datos del canal
+                userId: userId, // Incluimos el userId
+                creationDate: new Date().toISOString(), // Fecha de creación
+                channelUrl: `https://mytube.com/${currentChannel.channelName}`, // Generamos el URL del canal basado en el nombre
+                subscribersCount: 0, // Establecemos un valor inicial para los suscriptores
+            };
+
+            console.log("Datos del canal a enviar:", channelData); // Asegúrate de que los datos son correctos
+
+            await axiosInstance.post('/channels', channelData); // Realizamos el POST para crear el canal
+            fetchChannels(); // Recargamos los canales
+            setShowModal(false); // Cerramos el modal
         } catch (err) {
+            console.error("Error al guardar el canal:", err);
             setError('Error al guardar el canal.');
             setShowToast(true); // Muestra el toast en caso de error
         }
     };
+
 
     // Abrir modal para crear un canal
     const handleCreateChannel = () => {

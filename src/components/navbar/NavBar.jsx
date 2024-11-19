@@ -1,12 +1,23 @@
 // src/components/navbar/NavBar.jsx
-import React, { useState } from "react";
-import { Navbar, Nav, Form, FormControl, Button, Container } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Navbar, Form, FormControl, Button, Container, Collapse } from "react-bootstrap";
 import { FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const NavBar = ({ onToggleSidebar }) => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [isAuthenticated, setIsAuthenticated] = useState(false);  // Estado de autenticación
+    const [openProfileMenu, setOpenProfileMenu] = useState(false); // Controlar collapse del perfil
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // Comprobar si el token está presente al cargar el componente
+        const token = localStorage.getItem("authToken");
+        console.log("Llego hasta aca")
+        if (token) {
+            setIsAuthenticated(true);
+        }
+    }, []);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -18,7 +29,19 @@ const NavBar = ({ onToggleSidebar }) => {
     };
 
     const handleLoginClick = () => {
+        // Redirigir a la página de login
         navigate("/login");
+    };
+
+    const handleLogout = () => {
+        // Eliminar el token de localStorage y cambiar el estado de autenticación
+        localStorage.removeItem("authToken");
+        setIsAuthenticated(false);
+        navigate("/");  // Redirige a la página principal
+    };
+
+    const handleProfileClick = () => {
+        navigate("/profile"); // Redirige al perfil del usuario
     };
 
     return (
@@ -42,9 +65,51 @@ const NavBar = ({ onToggleSidebar }) => {
                         />
                         <Button type="submit" variant="outline-light">Buscar</Button>
                     </Form>
-                    <Button variant="outline-light" onClick={handleLoginClick} className="ms-2">
-                        Iniciar sesión
-                    </Button>
+
+                    {/* Mostrar botón de Login o Perfil según el estado de autenticación */}
+                    {isAuthenticated ? (
+                        <div className="position-relative">
+                            <Button
+                                variant="outline-light"
+                                onClick={() => setOpenProfileMenu(!openProfileMenu)}
+                            >
+                                Perfil
+                            </Button>
+                            {/* Collapse o menú de perfil que se extiende por encima del navbar */}
+                            <Collapse in={openProfileMenu}>
+                                <div
+                                    className="position-absolute mt-2"
+                                    style={{
+                                        top: '100%',
+                                        right: '0',
+                                        zIndex: 1050, // Asegura que esté sobre el navbar
+                                        backgroundColor: '#343a40',
+                                        borderRadius: '5px',
+                                        width: '200px'
+                                    }}
+                                >
+                                    <Button
+                                        variant="outline-light"
+                                        onClick={handleProfileClick}
+                                        className="d-block w-100 text-start p-2"
+                                    >
+                                        Visitar perfil
+                                    </Button>
+                                    <Button
+                                        variant="outline-light"
+                                        onClick={handleLogout}
+                                        className="d-block w-100 text-start p-2"
+                                    >
+                                        Cerrar sesión
+                                    </Button>
+                                </div>
+                            </Collapse>
+                        </div>
+                    ) : (
+                        <Button variant="outline-light" onClick={handleLoginClick} className="ms-2">
+                            Iniciar sesión
+                        </Button>
+                    )}
                 </Navbar.Collapse>
             </Container>
         </Navbar>

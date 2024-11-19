@@ -23,6 +23,7 @@ const LoginPage = () => {
         const token = response.data.token; // Ajusta según cómo tu backend retorne el token
         localStorage.setItem("authToken", token);
         navigate("/");
+        window.location.reload(); // Recargar la página para forzar la actualización del estado
       } else {
         setError("Credenciales incorrectas");
       }
@@ -30,19 +31,19 @@ const LoginPage = () => {
       console.error("Detalles del error: ", error);
       if (error.response) {
         // La solicitud se completó, pero el servidor respondió con un código de estado no exitoso
-        console.log("1");
         setError(`Error: ${error.response.status}`);
       } else if (error.request) {
         // La solicitud fue realizada pero no se recibió respuesta
         setError("No se recibió respuesta del servidor");
-        console.log("2");
       } else {
         // Algo más causó el error
-        console.log("3");
         setError("Error al intentar conectar con el servidor");
       }
     }
   };
+
+
+
 
   return (
     <Container
