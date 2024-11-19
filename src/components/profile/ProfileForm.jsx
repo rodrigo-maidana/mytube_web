@@ -1,51 +1,84 @@
-// src/components/profile/ProfileForm.jsx
-import React, { useState, useEffect } from "react";
-import { Form, Button, Container, Card, Alert } from "react-bootstrap";
-import axiosInstance from "../axiosinstance.js";
+import React, { useState, useEffect } from 'react';
+import { Button, Form, Card, Alert, Container } from 'react-bootstrap';
+import axiosInstance from '../axiosinstance';
+import { jwtDecode } from 'jwt-decode';  // Importamos jwt-decode para decodificar el token
 
-// eslint-disable-next-line react/prop-types
-const ProfileForm = ({ userId }) => {
-  if (typeof userId !== 'number') {
-    throw new Error('userId debe ser un número');
-  }
+const ProfileForm = () => {
   const [profile, setProfile] = useState({
-    username: "",
-    registrationDate: "",
-    birthdate: "",
-    bio: "",
-    avatarUrl: "",
+    username: '',
+    email: '',
+    registrationDate: '',
+    avatarUrl: '',
+    bio: '',
+    birthdate: '',
   });
   const [editForm, setEditForm] = useState({
-    birthdate: "",
-    bio: "",
-    avatarUrl: "",
+    bio: '',
+    avatarUrl: '',
+    birthdate: '',
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [userId, setUserId] = useState(null);
 
-  // Obtener datos del perfil al montar el componente
+  // Obtener el userId usando el email del token JWT
   useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          setError('No se encontró token de autenticación.');
+          return;
+        }
+
+        const decodedToken = jwtDecode(token); // Decodificamos el token
+        const email = decodedToken.sub; // Extraemos el email del token (campo 'sub')
+
+        // Realizamos la solicitud GET para obtener el userId usando el email
+        const response = await axiosInstance.get(`/users/search-by-email?email=${email}`);
+        console.log('Respuesta del servidor al buscar el userId:', response); // Log de la respuesta
+
+        if (response.data) {
+          setUserId(response.data); // Directamente guardamos el userId
+          console.log('userId obtenido:', response.data); // Verifica que el userId se obtiene correctamente
+        } else {
+          setError('Usuario no encontrado.');
+        }
+      } catch (err) {
+        setError('Error al obtener el userId.');
+        console.error('Error al obtener el userId:', err);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
+  // Obtener los datos del perfil cuando tengamos el userId
+  useEffect(() => {
+    if (!userId) return;
+
     const fetchProfileData = async () => {
       try {
-        const userResponse = await axiosInstance.get(`/users/${userId}`);
         const profileResponse = await axiosInstance.get(`/users/profile/${userId}`);
-
         setProfile({
-          username: userResponse.data.username,
+          username: profileResponse.data.username,
+          email: profileResponse.data.email,
+          avatarUrl: profileResponse.data.avatarUrl || '',
+          bio: profileResponse.data.bio || '',
+          birthdate: profileResponse.data.birthdate || '',
           registrationDate: profileResponse.data.registrationDate,
-          birthdate: profileResponse.data.birthdate || "",
-          bio: profileResponse.data.bio || "",
-          avatarUrl: profileResponse.data.avatarUrl || "",
         });
 
+        // Pre-llenamos el formulario de edición con los datos del perfil
         setEditForm({
-          birthdate: profileResponse.data.birthdate || "",
-          bio: profileResponse.data.bio || "",
-          avatarUrl: profileResponse.data.avatarUrl || "",
+          bio: profileResponse.data.bio || '',
+          avatarUrl: profileResponse.data.avatarUrl || '',
+          birthdate: profileResponse.data.birthdate || '',
         });
       } catch (error) {
-        setError("Error al obtener los datos del perfil");
+        setError('Error al obtener los datos del perfil');
+        console.error('Error al obtener los datos del perfil:', error);
       }
     };
 
@@ -62,47 +95,70 @@ const ProfileForm = ({ userId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Verificar si el userId es undefined
+    if (!userId) {
+      setError('El userId no está disponible.');
+      return;
+    }
+
+    // Creamos el objeto de datos para la solicitud PUT
+    const updatedProfile = {
+      ...profile, // Mantenemos los valores originales de profile
+      bio: editForm.bio,
+      avatarUrl: editForm.avatarUrl,
+      birthdate: editForm.birthdate,
+    };
+
     try {
-      const response = await axiosInstance.put(`/users/profile/${userId}`, editForm);
+      const response = await axiosInstance.put(`/users/${userId}`, updatedProfile);
+
       if (response.status === 200 || response.status === 201) {
-        setSuccess("Perfil actualizado con éxito");
-        setError("");
+        setSuccess('Perfil actualizado con éxito');
+        setError('');
         setProfile({
           ...profile,
-          birthdate: editForm.birthdate,
           bio: editForm.bio,
           avatarUrl: editForm.avatarUrl,
+          birthdate: editForm.birthdate,
         });
         setIsEditing(false);
       } else {
-        setError("Error al actualizar el perfil");
-        setSuccess("");
+        setError('Error al actualizar el perfil');
+        setSuccess('');
       }
     } catch (error) {
-      setError("Error en la conexión con el servidor");
-      setSuccess("");
+      setError('Error en la conexión con el servidor');
+      setSuccess('');
+      console.error('Error al actualizar el perfil:', error);
     }
   };
 
   return (
-      <Container
-          className="d-flex justify-content-center align-items-center mt-5"
-          style={{ minHeight: "80vh" }}
-      >
-        <Card style={{ width: "100%", maxWidth: "500px" }} className="p-4 shadow">
+      <Container className="d-flex justify-content-center align-items-center mt-5" style={{ minHeight: '80vh' }}>
+        <Card style={{ width: '100%', maxWidth: '500px' }} className="p-4 shadow">
           <Card.Body>
             <h2 className="text-center mb-4">Perfil</h2>
 
-            {error && (
-                <Alert variant="danger" className="text-center">
-                  {error}
-                </Alert>
-            )}
-            {success && (
-                <Alert variant="success" className="text-center">
-                  {success}
-                </Alert>
-            )}
+            {error && <Alert variant="danger" className="text-center">{error}</Alert>}
+            {success && <Alert variant="success" className="text-center">{success}</Alert>}
+
+            {/* Avatar circular */}
+            <div className="d-flex justify-content-center mb-4">
+              <img
+                  src={profile.avatarUrl || "https://static.vecteezy.com/system/resources/previews/020/911/739/original/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png"}
+                  alt="Avatar"
+                  style={{
+                    width: '80px',  // Tamaño del avatar
+                    height: '80px',
+                    borderRadius: '50%',  // Hace el avatar circular
+                    objectFit: 'cover',  // Asegura que la imagen se recorte correctamente si tiene dimensiones distintas
+                    border: '2px solid #fff',  // Borde blanco alrededor del avatar
+                    boxShadow: '0 0 5px rgba(0, 0, 0, 0.2)', // Sombra ligera
+                    marginBottom: '10px',
+                  }}
+              />
+            </div>
 
             {isEditing ? (
                 <Form onSubmit={handleSubmit}>
@@ -138,11 +194,7 @@ const ProfileForm = ({ userId }) => {
                   </Form.Group>
 
                   <div className="d-flex justify-content-end">
-                    <Button
-                        variant="secondary"
-                        onClick={() => setIsEditing(false)}
-                        className="me-2"
-                    >
+                    <Button variant="secondary" onClick={() => setIsEditing(false)} className="me-2">
                       Cancelar
                     </Button>
                     <Button variant="primary" type="submit">
@@ -152,26 +204,12 @@ const ProfileForm = ({ userId }) => {
                 </Form>
             ) : (
                 <div className="space-y-4">
-                  <p>
-                    <strong>Nombre de Usuario:</strong> {profile.username}
-                  </p>
-                  <p>
-                    <strong>Fecha de Registro:</strong> {profile.registrationDate}
-                  </p>
-                  <p>
-                    <strong>Fecha de Nacimiento:</strong> {profile.birthdate || "No establecida"}
-                  </p>
-                  <p>
-                    <strong>Biografía:</strong> {profile.bio || "No establecida"}
-                  </p>
-                  <p>
-                    <strong>URL del Avatar:</strong> {profile.avatarUrl || "No establecida"}
-                  </p>
-                  <Button
-                      variant="link"
-                      className="p-0"
-                      onClick={() => setIsEditing(true)}
-                  >
+                  <p><strong>Nombre de Usuario:</strong> {profile.username}</p>
+                  <p><strong>Correo Electrónico:</strong> {profile.email}</p>
+                  <p><strong>Fecha de Registro:</strong> {profile.registrationDate}</p>
+                  <p><strong>Fecha de Nacimiento:</strong> {profile.birthdate || 'No establecida'}</p>
+                  <p><strong>Biografía:</strong> {profile.bio || 'No establecida'}</p>
+                  <Button variant="link" className="p-0" onClick={() => setIsEditing(true)}>
                     Editar Perfil
                   </Button>
                 </div>
