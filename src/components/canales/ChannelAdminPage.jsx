@@ -38,28 +38,56 @@ const ChannelAdminPage = () => {
                 return;
             }
 
-            const decodedToken = jwtDecode(token); // Decodificamos el token para obtener el userId
-            const userId = decodedToken._id; // Suponiendo que el ID del usuario está en 'id' del token
+            // Decodificar el token para obtener el email
+            const decodedToken = jwtDecode(token); // Decodificamos el token
+            const email = decodedToken.sub; // Extraemos el email del token (campo 'sub')
+            console.log("Email extraído del token:", email); // Verifica que el email es correcto
 
+            // Realizar la solicitud GET para obtener el userId usando el email
+            const url = `/users/search-by-email?email=${email}`;
+            console.log("Realizando GET a la URL:", url); // Verifica la URL de la solicitud
+            const response = await axiosInstance.get(url);
+
+            // Verificamos que la respuesta tiene un userId
+            console.log("Respuesta del servidor al buscar por email:", response); // Verifica la respuesta del servidor
+
+            const userId = response.data; // Suponiendo que el 'id' se devuelve en la respuesta
+
+            // Verificamos si el userId fue encontrado
+            if (!userId) {
+                setError("Usuario no encontrado.");
+                setShowToast(true);
+                return;
+            }
+
+            // Crear el objeto con los datos del canal, incluyendo el userId
             const channelData = {
                 ...currentChannel, // Los datos del canal
-                userId: userId, // Incluimos el userId
+                userId: userId, // Incluimos el userId obtenido
                 creationDate: new Date().toISOString(), // Fecha de creación
                 channelUrl: `https://mytube.com/${currentChannel.channelName}`, // Generamos el URL del canal basado en el nombre
                 subscribersCount: 0, // Establecemos un valor inicial para los suscriptores
             };
 
-            console.log("Datos del canal a enviar:", channelData); // Asegúrate de que los datos son correctos
+            console.log("Datos del canal a enviar:", channelData); // Verifica los datos enviados
 
             await axiosInstance.post('/channels', channelData); // Realizamos el POST para crear el canal
             fetchChannels(); // Recargamos los canales
             setShowModal(false); // Cerramos el modal
         } catch (err) {
             console.error("Error al guardar el canal:", err);
+            if (err.response) {
+                // Si el error tiene respuesta, mostramos más detalles
+                console.error("Detalles del error del servidor:", err.response.data);
+            }
             setError('Error al guardar el canal.');
             setShowToast(true); // Muestra el toast en caso de error
         }
     };
+
+
+
+
 
 
     // Abrir modal para crear un canal
