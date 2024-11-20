@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Card, Alert, Container } from 'react-bootstrap';
+import { Button, Form, Card, Alert, Container, ListGroup } from 'react-bootstrap';
 import axiosInstance from '../axiosinstance';
 import { jwtDecode } from 'jwt-decode';  // Importamos jwt-decode para decodificar el token
 
@@ -21,6 +21,7 @@ const ProfileForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [userId, setUserId] = useState(null);
+  const [channels, setChannels] = useState([]); // Estado para los canales
 
   // Obtener el userId usando el email del token JWT
   useEffect(() => {
@@ -76,6 +77,10 @@ const ProfileForm = () => {
           avatarUrl: profileResponse.data.avatarUrl || '',
           birthdate: profileResponse.data.birthdate || '',
         });
+
+        // Obtener los canales del usuario
+        const channelsResponse = await axiosInstance.get(`/channels/user/${userId}`);
+        setChannels(channelsResponse.data); // Guardamos los canales en el estado
       } catch (error) {
         setError('Error al obtener los datos del perfil');
         console.error('Error al obtener los datos del perfil:', error);
@@ -111,7 +116,7 @@ const ProfileForm = () => {
     };
 
     try {
-      const response = await axiosInstance.put(`/users/${userId}`, updatedProfile);
+      const response = await axiosInstance.put(`/users/profile/${userId}`, updatedProfile);
 
       if (response.status === 200 || response.status === 201) {
         setSuccess('Perfil actualizado con éxito');
@@ -209,9 +214,25 @@ const ProfileForm = () => {
                   <p><strong>Fecha de Registro:</strong> {profile.registrationDate}</p>
                   <p><strong>Fecha de Nacimiento:</strong> {profile.birthdate || 'No establecida'}</p>
                   <p><strong>Biografía:</strong> {profile.bio || 'No establecida'}</p>
+
                   <Button variant="link" className="p-0" onClick={() => setIsEditing(true)}>
                     Editar Perfil
                   </Button>
+                  {/* Mostrar los canales asociados al usuario */}
+                  <div className="mt-4">
+                    <h5>Canales Asociados:</h5>
+                    {channels.length > 0 ? (
+                        <ListGroup>
+                          {channels.map((channel) => (
+                              <ListGroup.Item key={channel._id}>
+                                <strong>{channel.channelName}</strong> - {channel.channelDescription}
+                              </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                    ) : (
+                        <p>No tienes canales asociados.</p>
+                    )}
+                  </div>
                 </div>
             )}
           </Card.Body>
