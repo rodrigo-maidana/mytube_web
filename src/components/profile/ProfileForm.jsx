@@ -92,9 +92,8 @@ const ProfileForm = () => {
         });
 
         // Obtener canales del usuario y filtrar los que no estén eliminados
-        const channelsResponse = await axiosInstance.get(`/channels/users/${userId}`);
-        const activeChannels = channelsResponse.data.filter((channel) => !channel.deleted); // Solo canales no eliminados
-        setChannels(activeChannels);
+        const channelsResponse = await axiosInstance.get(`/channels/users/${userId}?active=true`);
+          setChannels(channelsResponse.data);
       } catch (error) {
         setError('Error al obtener los datos del perfil');
       }
@@ -370,12 +369,12 @@ const ProfileForm = () => {
                     ) : (
                         <p>No tienes canales asociados.</p>
                     )}
-
                     {/* Modal para Subir Video */}
                     {showVideoModal && (
                         <UploadVideo
-                            channelId={selectedChannelId}
-                            onHide={() => setShowVideoModal(false)}
+                            channelId={selectedChannelId} // Pasar el canal seleccionado
+                            userId={userId} // Pasar el usuario actual
+                            onHide={() => setShowVideoModal(false)} // Manejar cierre del modal
                         />
                     )}
                   </div>

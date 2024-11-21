@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Form, Modal, Alert } from "react-bootstrap";
 import axiosInstance from "../axiosinstance";
 
-const UploadVideo = ({ channelId, onHide }) => {
+const UploadVideo = ({ channelId, userId, onHide }) => {
     const [newVideo, setNewVideo] = useState({
         title: "",
         description: "",
@@ -10,7 +10,9 @@ const UploadVideo = ({ channelId, onHide }) => {
         thumbnailUrl: "",
         tags: "",
         visibility: "PUBLIC",
-        duration: 0, // La duración será siempre 0 por defecto
+        format: "mp4", // Valor predeterminado
+        duration: 0, // Siempre 0
+        uploadDate: "", // Vacío para que se genere automáticamente en el backend
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -27,18 +29,19 @@ const UploadVideo = ({ channelId, onHide }) => {
     // Maneja el envío del formulario
     const handleUploadVideo = async () => {
         try {
-            if (!channelId) {
-                setError("El ID del canal no es válido.");
+            if (!channelId || !userId) {
+                setError("El ID del canal o del usuario no es válido.");
                 return;
             }
 
             // Crea el objeto para la solicitud POST
             const videoData = {
                 ...newVideo,
-                channelId, // Incluimos el ID del canal asociado
+                channelId, // ID del canal
+                userId, // ID del usuario
             };
 
-            await axiosInstance.post(`/videos/${channelId}`, videoData);
+            await axiosInstance.post(`/videos`, videoData);
             setSuccess("Video subido con éxito.");
             setError("");
             setNewVideo({
@@ -48,7 +51,9 @@ const UploadVideo = ({ channelId, onHide }) => {
                 thumbnailUrl: "", // Puede ser null
                 tags: "",
                 visibility: "PUBLIC",
+                format: "mp4", // Restablecemos a 'mp4'
                 duration: 0,
+                uploadDate: "",
             });
             onHide(); // Cierra el modal
         } catch (err) {

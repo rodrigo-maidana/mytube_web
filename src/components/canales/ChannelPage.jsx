@@ -19,7 +19,7 @@ const ChannelPage = () => {
     // Obtener todos los canales
     const fetchChannels = async () => {
         try {
-            const response = await axiosInstance.get("/channels");
+            const response = await axiosInstance.get("/channels/active");
             setChannels(response.data);
         } catch (err) {
             setError("Error al cargar los canales. Inténtalo de nuevo.");
