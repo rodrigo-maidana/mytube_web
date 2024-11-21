@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Table, Toast, ToastContainer } from 'react-bootstrap';
 import axiosInstance from '../axiosinstance';
-import {jwtDecode} from "jwt-decode";  // Importamos jwt-decode para decodificar el token
+import { jwtDecode } from 'jwt-decode';
 
 const ChannelAdminPage = () => {
     const [channels, setChannels] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState('create'); // 'create' or 'edit'
-    const [currentChannel, setCurrentChannel] = useState({ channelName: '', channelDescription: '' });
+    const [currentChannel, setCurrentChannel] = useState({ channelName: '', channelDescription: '', userId: '', creationDate: '', channelUrl: '', subscribersCount: 0 });
     const [error, setError] = useState('');
     const [showToast, setShowToast] = useState(false); // Control para mostrar el toast
     const [showConfirmModal, setShowConfirmModal] = useState(false); // Control del modal de confirmación
@@ -23,83 +23,108 @@ const ChannelAdminPage = () => {
             const response = await axiosInstance.get('/channels');
             setChannels(response.data);
         } catch (err) {
-            setError('Error al obtener los canales.');
-            setShowToast(true); // Muestra el toast en caso de error
+            handleError('Error al obtener los canales.');
         }
     };
 
-    // Crear o actualizar canal
-    const saveChannel = async () => {
+    // Crear canal (POST)
+    const createChannel = async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            handleError('No se encontró token de autenticación.');
+            return;
+        }
+
         try {
-            const token = localStorage.getItem("authToken");
-            if (!token) {
-                setError("No se encontró token de autenticación.");
-                setShowToast(true);
-                return;
-            }
+            // Obtener el userId desde el token
+            const decodedToken = jwtDecode(token);
+            const email = decodedToken.sub;
 
-            // Decodificar el token para obtener el email
-            const decodedToken = jwtDecode(token); // Decodificamos el token
-            const email = decodedToken.sub; // Extraemos el email del token (campo 'sub')
-            console.log("Email extraído del token:", email); // Verifica que el email es correcto
+            const userIdResponse = await axiosInstance.get(`/users/search-by-email?email=${email}`);
+            const userId = userIdResponse.data;
 
-            // Realizar la solicitud GET para obtener el userId usando el email
-            const url = `/users/search-by-email?email=${email}`;
-            console.log("Realizando GET a la URL:", url); // Verifica la URL de la solicitud
-            const response = await axiosInstance.get(url);
-
-            // Verificamos que la respuesta tiene un userId
-            console.log("Respuesta del servidor al buscar por email:", response); // Verifica la respuesta del servidor
-
-            const userId = response.data; // Suponiendo que el 'id' se devuelve en la respuesta
-
-            // Verificamos si el userId fue encontrado
             if (!userId) {
-                setError("Usuario no encontrado.");
-                setShowToast(true);
+                handleError('Usuario no encontrado.');
                 return;
             }
 
-            // Crear el objeto con los datos del canal, incluyendo el userId
-            const channelData = {
-                ...currentChannel, // Los datos del canal
-                userId: userId, // Incluimos el userId obtenido
-                creationDate: new Date().toISOString(), // Fecha de creación
-                channelUrl: `https://mytube.com/${currentChannel.channelName}`, // Generamos el URL del canal basado en el nombre
-                subscribersCount: 0, // Establecemos un valor inicial para los suscriptores
+            const newChannel = {
+                ...currentChannel,
+                userId,
+                creationDate: new Date().toISOString(),
+                channelUrl: `https://mytube.com/${currentChannel.channelName}`,
+                subscribersCount: 0,
             };
 
-            console.log("Datos del canal a enviar:", channelData); // Verifica los datos enviados
-
-            await axiosInstance.post('/channels', channelData); // Realizamos el POST para crear el canal
-            fetchChannels(); // Recargamos los canales
+            await axiosInstance.post('/channels', newChannel);
+            fetchChannels();
             setShowModal(false); // Cerramos el modal
         } catch (err) {
-            console.error("Error al guardar el canal:", err);
-            if (err.response) {
-                // Si el error tiene respuesta, mostramos más detalles
-                console.error("Detalles del error del servidor:", err.response.data);
-            }
-            setError('Error al guardar el canal.');
-            setShowToast(true); // Muestra el toast en caso de error
+            handleError('Error al crear el canal.');
         }
     };
 
+    // Editar canal (PUT)
+    const updateChannel = async () => {
+        if (!currentChannel._id) {
+            handleError('ID del canal no encontrado.');
+            return;
+        }
 
+        try {
+            const {
+                _id,
+                userId,
+                channelName,
+                channelDescription,
+                creationDate,
+                channelUrl,
+                subscribersCount,
+            } = currentChannel;
 
+            // Construir el objeto para la actualización
+            const updatedChannelData = {
+                userId,
+                channelName,
+                channelDescription,
+                creationDate,
+                channelUrl,
+                subscribersCount,
+            };
 
+            // Realizar la solicitud PUT para actualizar todos los datos del canal
+            const response = await axiosInstance.put(`/channels/${_id}`, updatedChannelData);
 
+            if (response.status === 200) {
+                // Actualizar la lista de canales
+                fetchChannels();
+                setShowModal(false); // Cerrar el modal en caso de éxito
+            } else {
+                handleError('Error al editar el canal.');
+            }
+        } catch (err) {
+            handleError('Error al editar el canal.');
+        }
+    };
 
     // Abrir modal para crear un canal
     const handleCreateChannel = () => {
-        setCurrentChannel({ channelName: '', channelDescription: '' });
+        setCurrentChannel({ channelName: '', channelDescription: '', userId: '', creationDate: '', channelUrl: '', subscribersCount: 0 });
         setModalType('create');
         setShowModal(true);
     };
 
     // Abrir modal para editar canal
     const handleEditChannel = (channel) => {
-        setCurrentChannel(channel);
+        setCurrentChannel({
+            _id: channel._id,
+            userId: channel.userId,
+            channelName: channel.channelName,
+            channelDescription: channel.channelDescription,
+            creationDate: channel.creationDate,
+            channelUrl: channel.channelUrl,
+            subscribersCount: channel.subscribersCount,
+        });
         setModalType('edit');
         setShowModal(true);
     };
@@ -117,9 +142,14 @@ const ChannelAdminPage = () => {
             fetchChannels();
             setShowConfirmModal(false); // Cierra el modal de confirmación
         } catch (err) {
-            setError('Error al eliminar el canal.');
-            setShowToast(true); // Muestra el toast en caso de error
+            handleError('Error al eliminar el canal.');
         }
+    };
+
+    // Manejo de errores
+    const handleError = (message) => {
+        setError(message);
+        setShowToast(true);
     };
 
     return (
@@ -163,6 +193,7 @@ const ChannelAdminPage = () => {
                                 type="text"
                                 value={currentChannel.channelName}
                                 onChange={(e) => setCurrentChannel({ ...currentChannel, channelName: e.target.value })}
+                                disabled={modalType === 'edit'} // Deshabilita la edición del nombre en el modo 'edit'
                             />
                         </Form.Group>
                         <Form.Group controlId="channelDescription" className="mt-3">
@@ -180,7 +211,10 @@ const ChannelAdminPage = () => {
                     <Button variant="secondary" onClick={() => setShowModal(false)}>
                         Cancelar
                     </Button>
-                    <Button variant="primary" onClick={saveChannel}>
+                    <Button
+                        variant="primary"
+                        onClick={modalType === 'create' ? createChannel : updateChannel}
+                    >
                         {modalType === 'create' ? 'Crear' : 'Guardar'}
                     </Button>
                 </Modal.Footer>
