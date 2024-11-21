@@ -36,29 +36,6 @@ const SideBar = ({ isCollapsed }) => {
             {!isCollapsed && <span>Lista de Usuarios</span>}
           </Link>
         </li>
-        <li className="nav-item">
-          <Dropdown>
-            <Dropdown.Toggle as="div" className="nav-link w-100 text-start">
-              <FaLayerGroup className="icon" />
-              {!isCollapsed && <span>PK</span>}
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu>
-              <Dropdown.Item as={Link} to="/channels/crud" className="nav-link">
-                <FaLayerGroup className="icon" />
-                <span>CRUD Canales</span>
-              </Dropdown.Item>
-              <Dropdown.Item
-                as={Link}
-                to="/playlists/crud"
-                className="nav-link"
-              >
-                <FaLayerGroup className="icon" />
-                <span>CRUD Playlists</span>
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </li>
       </ul>
     </div>
   );
