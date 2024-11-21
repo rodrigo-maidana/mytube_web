@@ -116,7 +116,8 @@ const ProfileForm = () => {
     };
 
     try {
-      const response = await axiosInstance.put(`/users/profile/${userId}`, updatedProfile);
+      console.log(updatedProfile);
+      const response = await axiosInstance.put(`/users/${userId}`, updatedProfile);
 
       if (response.status === 200 || response.status === 201) {
         setSuccess('Perfil actualizado con éxito');
