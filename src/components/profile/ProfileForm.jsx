@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Card, Alert, Container, ListGroup, Modal } from 'react-bootstrap';
 import axiosInstance from '../axiosinstance';
 import {jwtDecode} from 'jwt-decode';
+import UploadVideo from "../videos/UploadVideo.jsx";
 
 const ProfileForm = () => {
   const [profile, setProfile] = useState({
@@ -37,6 +38,9 @@ const ProfileForm = () => {
     channelName: '',
     channelDescription: '',
   });
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [selectedChannelId, setSelectedChannelId] = useState(null);
+
 
   // Obtener el userId usando el email del token JWT
   useEffect(() => {
@@ -87,9 +91,10 @@ const ProfileForm = () => {
           birthdate: profileResponse.data.birthdate || '',
         });
 
-        // Obtener los canales del usuario
+        // Obtener canales del usuario y filtrar los que no estén eliminados
         const channelsResponse = await axiosInstance.get(`/channels/users/${userId}`);
-        setChannels(channelsResponse.data);
+        const activeChannels = channelsResponse.data.filter((channel) => !channel.deleted); // Solo canales no eliminados
+        setChannels(activeChannels);
       } catch (error) {
         setError('Error al obtener los datos del perfil');
       }
@@ -165,30 +170,24 @@ const ProfileForm = () => {
         return;
       }
 
-      console.log(`Eliminando canal con ID: ${channelId}`);
+      console.log(`Solicitando eliminación lógica para el canal con ID: ${channelId}`);
 
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        setError('No se encontró token de autenticación. Por favor, inicia sesión nuevamente.');
-        return;
-      }
+      // Realizamos la solicitud DELETE al endpoint
+      const response = await axiosInstance.delete(`/channels/${channelId}`);
 
-      // Realizamos la solicitud DELETE con el token de autenticación
-      const response = await axiosInstance.delete(`/channels/${channelId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 200) {
-        console.log('Canal eliminado con éxito');
-        // Recargar la página después de eliminar exitosamente
-        window.location.reload();
+      if (response.status === 204) {
+        console.log('Canal eliminado lógicamente con éxito.');
+        // Elimina el canal del estado local sin recargar la página
+        setChannels((prevChannels) =>
+            prevChannels.filter((channel) => channel._id !== channelId)
+        );
       } else {
-        setError('Error al eliminar el canal. Código de estado inesperado.');
+        setError('Error inesperado al eliminar el canal.');
       }
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
+      if (error.response && error.response.status === 404) {
+        setError('Canal no encontrado. Puede que ya haya sido eliminado.');
+      } else if (error.response && error.response.data && error.response.data.message) {
         setError(`Error al eliminar el canal: ${error.response.data.message}`);
       } else {
         setError('Error al eliminar el canal. Por favor, inténtalo de nuevo más tarde.');
@@ -196,6 +195,8 @@ const ProfileForm = () => {
       console.error('Error al eliminar el canal:', error);
     }
   };
+
+
 
 
   const handleSubmit = async (e) => {
@@ -233,7 +234,7 @@ const ProfileForm = () => {
 
   return (
       <Container className="d-flex justify-content-center align-items-center mt-5" style={{ minHeight: '80vh' }}>
-        <Card style={{ width: '100%', maxWidth: '700px' }} className="p-4 shadow">
+        <Card style={{ width: '100%', maxWidth: '1200px' }} className="p-4 shadow">
           <Card.Body>
             <h2 className="text-center mb-4">Perfil</h2>
 
@@ -322,11 +323,27 @@ const ProfileForm = () => {
                     {channels.length > 0 ? (
                         <ListGroup>
                           {channels.map((channel) => (
-                              <ListGroup.Item key={channel._id} className="d-flex justify-content-between align-items-center">
+                              <ListGroup.Item
+                                  key={channel._id}
+                                  className="d-flex justify-content-between align-items-center"
+                              >
                                 <div>
                                   <strong>{channel.channelName}</strong> - {channel.channelDescription}
                                 </div>
                                 <div>
+                                  {/* Botón para Subir Video */}
+                                  <Button
+                                      variant="info"
+                                      size="sm"
+                                      className="me-2"
+                                      onClick={() => {
+                                        setSelectedChannelId(channel._id);
+                                        setShowVideoModal(true);
+                                      }}
+                                  >
+                                    Subir Video
+                                  </Button>
+                                  {/* Botón para Editar */}
                                   <Button
                                       variant="warning"
                                       size="sm"
@@ -338,6 +355,7 @@ const ProfileForm = () => {
                                   >
                                     Editar
                                   </Button>
+                                  {/* Botón para Eliminar */}
                                   <Button
                                       variant="danger"
                                       size="sm"
@@ -352,7 +370,16 @@ const ProfileForm = () => {
                     ) : (
                         <p>No tienes canales asociados.</p>
                     )}
+
+                    {/* Modal para Subir Video */}
+                    {showVideoModal && (
+                        <UploadVideo
+                            channelId={selectedChannelId}
+                            onHide={() => setShowVideoModal(false)}
+                        />
+                    )}
                   </div>
+
                 </div>
             )}
           </Card.Body>
@@ -436,6 +463,7 @@ const ProfileForm = () => {
         </Modal>
       </Container>
   );
+
 };
 
 export default ProfileForm;
